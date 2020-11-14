@@ -1,21 +1,23 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
-
+use App\Task;    // 追加
 class TasksController extends Controller
 {
+      public function index()
+    {
+        // メッセージ一覧を取得
+        $tasks = Taskｓ::all();
+        // メッセージ一覧ビューでそれを表示
+        return view('tasks.index', [
+            'tasks' => $tasks,
+        ]);
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -23,9 +25,12 @@ class TasksController extends Controller
      */
     public function create()
     {
-        //
+        $tasks = new tasks;
+        // メッセージ作成ビューを表示
+        return view('tasks.create', [
+            'tasks' => $tasks,
+        ]);
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -36,7 +41,6 @@ class TasksController extends Controller
     {
         //
     }
-
     /**
      * Display the specified resource.
      *
@@ -47,7 +51,6 @@ class TasksController extends Controller
     {
         //
     }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -58,7 +61,6 @@ class TasksController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -70,7 +72,6 @@ class TasksController extends Controller
     {
         //
     }
-
     /**
      * Remove the specified resource from storage.
      *
