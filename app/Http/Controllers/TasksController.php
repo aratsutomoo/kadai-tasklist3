@@ -8,10 +8,10 @@ class TasksController extends Controller
     public function index()
     {
         // メッセージ一覧を取得
-        $tasks = Task::all();
+        $task = Task::all();
         // メッセージ一覧ビューでそれを表示
         return view('tasks.index', [
-            'tasks' => $tasks,
+            'tasks' => $task,
         ]);
     }
     /**
@@ -44,9 +44,9 @@ class TasksController extends Controller
     public function store(Request $request)
     {
          // メッセージを作成
-        $tasks = new Task;
-        $tasks->content = $request->content;
-        $tasks->save();
+        $task = new Task;
+        $task->content = $request->content;
+        $task->save();
 
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -61,7 +61,7 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
       return view('tasks.show', [
-            'tasks' => $tasks, 
+            'task' => $task, 
             ]);
     }
     
@@ -74,9 +74,9 @@ class TasksController extends Controller
     public function edit($id)
     {
         //
-        $tasks = Task::findOrFail($id);
+        $task = Task::findOrFail($id);
         return view('tasks.edit', [
-            'tasks' => $tasks,
+            'task' => $task,
         ]);
     }
     /**
@@ -89,10 +89,10 @@ class TasksController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $tasks = Task::findOrFail($id);
+        $task = Task::findOrFail($id);
         // メッセージを更新
-        $tasks->content = $request->content;
-        $tasks->save();
+        $task->content = $request->content;
+        $task->save();
 
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -106,9 +106,9 @@ class TasksController extends Controller
     public function destroy($id)
     {
         // idの値でメッセージを検索して取得
-        $tasks = Task::findOrFail($id);
+        $task = Task::findOrFail($id);
         // メッセージを削除
-        $tasks->delete();
+        $task->delete();
 
         // トップページへリダイレクトさせる
         return redirect('/');
