@@ -2,12 +2,13 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Task;    // 追加
+
 class TasksController extends Controller
 {
-      public function index()
+    public function index()
     {
         // メッセージ一覧を取得
-        $tasks = Taskｓ::all();
+        $tasks = Task::all();
         // メッセージ一覧ビューでそれを表示
         return view('tasks.index', [
             'tasks' => $tasks,
@@ -25,10 +26,13 @@ class TasksController extends Controller
      */
     public function create()
     {
-        $tasks = new tasks;
+        $task = new Task;
+          
+       
         // メッセージ作成ビューを表示
         return view('tasks.create', [
-            'tasks' => $tasks,
+            'task' => $task,
+            
         ]);
     }
     /**
@@ -39,7 +43,13 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         // メッセージを作成
+        $tasks = new Task;
+        $tasks->content = $request->content;
+        $tasks->save();
+
+        // トップページへリダイレクトさせる
+        return redirect('/');
     }
     /**
      * Display the specified resource.
@@ -49,8 +59,12 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        //
+        $task = Task::findOrFail($id);
+      return view('tasks.show', [
+            'tasks' => $tasks, 
+            ]);
     }
+    
     /**
      * Show the form for editing the specified resource.
      *
@@ -60,6 +74,10 @@ class TasksController extends Controller
     public function edit($id)
     {
         //
+        $tasks = Task::findOrFail($id);
+        return view('tasks.edit', [
+            'tasks' => $tasks,
+        ]);
     }
     /**
      * Update the specified resource in storage.
@@ -71,6 +89,13 @@ class TasksController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $tasks = Task::findOrFail($id);
+        // メッセージを更新
+        $tasks->content = $request->content;
+        $tasks->save();
+
+        // トップページへリダイレクトさせる
+        return redirect('/');
     }
     /**
      * Remove the specified resource from storage.
@@ -80,6 +105,12 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // idの値でメッセージを検索して取得
+        $tasks = Task::findOrFail($id);
+        // メッセージを削除
+        $tasks->delete();
+
+        // トップページへリダイレクトさせる
+        return redirect('/');
     }
 }

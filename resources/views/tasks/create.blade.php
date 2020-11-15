@@ -2,21 +2,19 @@
 
 @section('content')
 
-    <h1>id: {{ $message->id }} のメッセージ編集ページ</h1>
+    <h1>メッセージ新規作成ページ</h1>
 
     <div class="row">
         <div class="col-6">
-            {!! Form::model($message, ['route' => ['messages.update', $message->id], 'method' => 'put']) !!}
+            {!! Form::model($task, ['route' => 'tasks.store']) !!}
 
                 <div class="form-group">
                     {!! Form::label('content', 'メッセージ:') !!}
                     {!! Form::text('content', null, ['class' => 'form-control']) !!}
                 </div>
 
-                {!! Form::submit('更新', ['class' => 'btn btn-primary']) !!}
+                {!! Form::submit('投稿', ['class' => 'btn btn-primary']) !!}
 
             {!! Form::close() !!}
         </div>
     </div>
-
-@endsection
