@@ -7,7 +7,7 @@ class TasksController extends Controller
 {
     public function index()
     {
-        // メッセージ一覧を取得
+        // タスク一覧を取得
         $task = Task::all();
         // メッセージ一覧ビューでそれを表示
         return view('tasks.index', [
@@ -45,13 +45,13 @@ class TasksController extends Controller
     {
         // バリデーション
         $request->validate([
-            'title' => 'required|max:255',   // 追加
+           'status' => 'required|max:10',   // 追加
             'content' => 'required|max:255',
         ]);
         
          // メッセージを作成
         $task = new Task;
-        $task->title = $request->title;
+        $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
 
@@ -97,13 +97,13 @@ class TasksController extends Controller
     {
         // バリデーション
         $request->validate([
-            'title' => 'required|max:255',   // 追加
+            'status' => 'required|max:10',   // 追加
             'content' => 'required|max:255',
         ]);
 
         $task = Task::findOrFail($id);
         // メッセージを更新
-        $task->title = $request->title;  
+        $task->status = $request->status;  
         $task->content = $request->content;
         $task->save();
 
