@@ -88,9 +88,14 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // バリデーション
+        $request->validate([
+            'content' => 'required|max:255',
+        ]);
+
         $task = Task::findOrFail($id);
         // メッセージを更新
+         
         $task->content = $request->content;
         $task->save();
 
