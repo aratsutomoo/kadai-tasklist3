@@ -7,6 +7,7 @@ class TasksController extends Controller
 {
     public function index()
     {
+         $tasks = Task::paginate(25);
         // タスク一覧を取得
         $task = Task::all();
         // メッセージ一覧ビューでそれを表示
