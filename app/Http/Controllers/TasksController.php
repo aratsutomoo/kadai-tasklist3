@@ -5,20 +5,34 @@ use App\Task;    // 追加
 
 class TasksController extends Controller
 {
-    public function index()
-    {
-         $tasks = Task::paginate(25);
-       
-        // メッセージ一覧ビューでそれを表示
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
-    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    public function index()
+    {   
+        //ログインしているかチェックする
+        if (\Auth::check()) {
+            //ログイン中のユーザーを取得
+            $user = \Auth::user();
+            //ログイン中のユーザーのhasManyなTasksを取得->降順->ページネート10個
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+        
+            $data = [
+                'user' =>$user,
+                'tasks' => $tasks,
+            ];
+            return view('tasks.index', $data); 
+        
+        //ログインしていない場合はwelcomへ
+        }else {
+        
+            return view('welcome'); 
+        }
+    }
+    
+
     /**
      * Show the form for creating a new resource.
      *
@@ -26,15 +40,13 @@ class TasksController extends Controller
      */
     public function create()
     {
-        $task = new Task;
-          
-       
-        // メッセージ作成ビューを表示
-        return view('tasks.create', [
-            'task' => $task,
-            
-        ]);
-    }
+            $task =new Task;
+        
+            return view('tasks.create',[
+                'task' => $task,
+                ]);
+        }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -43,20 +55,16 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-        // バリデーション
-        $request->validate([
-           'status' => 'required|max:10',   // 追加
-            'content' => 'required|max:255',
+        $this->validate($request,[
+            'status'=>'required|max:10',
+            'content'=>'required|max:191',
         ]);
         
-         // メッセージを作成
-        $task = new Task;
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
-
-        // トップページへリダイレクトさせる
-        return redirect('/');
+            $request->user()->tasks()->create([
+                'content' =>$request->content,
+                'status' =>$request->status, 
+                ]);
+            return redirect('/');
     }
     /**
      * Display the specified resource.
@@ -66,12 +74,16 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        $task = Task::findOrFail($id);
-      return view('tasks.show', [
-            'task' => $task, 
-            ]);
+        $task = Task::find($id);
+        if(\Auth::id() === $task->user_id){  
+            return view('tasks.show',[
+                'task' => $task,
+                ]);
+        }else{
+            return redirect('/');
+        }
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -80,12 +92,17 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-        //
-        $task = Task::findOrFail($id);
-        return view('tasks.edit', [
-            'task' => $task,
-        ]);
+        $task = Task::find($id);
+        //ログイン中の人とtaskのuser_idが同じだったら
+        if(\Auth::id() === $task->user_id){       
+            return view('tasks.edit',[
+                'task' => $task,
+            ]);
+        }else{
+            return redirect('/');
+        }
     }
+
     /**
      * Update the specified resource in storage.
      *
@@ -95,21 +112,26 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // バリデーション
-        $request->validate([
-            'status' => 'required|max:10',   // 追加
-            'content' => 'required|max:255',
+        $this->validate($request,[
+            'status'=>'required|max:10',
+            'content'=>'required|max:191',
         ]);
-
-        $task = Task::findOrFail($id);
-        // メッセージを更新
-        $task->status = $request->status;  
-        $task->content = $request->content;
-        $task->save();
-
-        // トップページへリダイレクトさせる
-        return redirect('/');
+        
+        $task = Task::find($id);
+        //ログイン中の人とtaskのuser_idが同じだったら
+        if(\Auth::id() === $task->user_id){
+            $task->status = $request->status;
+            $task->content = $request->content;
+            //更新を保存する
+            $task->save();
+        
+            return redirect('/');
+    
+        }else{
+            return redirect('/');
+        }
     }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -118,12 +140,17 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        // idの値でメッセージを検索して取得
-        $task = Task::findOrFail($id);
-        // メッセージを削除
-        $task->delete();
-
-        // トップページへリダイレクトさせる
-        return redirect('/');
+        $task = Task::find($id);
+        if(\Auth::id() === $task->user_id){
+             $task->delete();
+        
+             return redirect('/');
+        
+        //ログインしていない場合はwelcomへ
+        }else {
+        
+            return redirect('/'); 
+        }   
+       
     }
 }
